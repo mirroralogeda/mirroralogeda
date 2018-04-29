@@ -8,12 +8,10 @@ import com.mirror.alogeda.commons.repository.EnderecoRepository;
 
 @Service
 public class EnderecoService extends CrudService<Endereco> {
-	private EnderecoRepository enderecoRepository;
 
 	@Autowired
 	public EnderecoService(EnderecoRepository enderecoRepository) {
-		this.enderecoRepository = enderecoRepository;
-		setGenericRepository(enderecoRepository);
+				super(enderecoRepository);
 	}
 
 	}

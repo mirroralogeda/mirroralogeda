@@ -8,32 +8,28 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="cidades")
-@SequenceGenerator(name = "cidades_seq", sequenceName = "cidades_seq", allocationSize = 1)
-public class Cidade {
+@Table(name = "setores")
+@SequenceGenerator(name = "setores_seq", sequenceName = "setores_seq", allocationSize = 1)
+public class Setor {
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cidades_seq")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "setores_seq")
 	private int id;
 	private String nome;
-	private String uf;
 
 	public int getId() {
 		return id;
 	}
+
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	public String getNome() {
 		return nome;
 	}
+
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-	public String getUf() {
-		return uf;
-	}
-	public void setUf(String uf) {
-		this.uf = uf;
 	}
 
 }

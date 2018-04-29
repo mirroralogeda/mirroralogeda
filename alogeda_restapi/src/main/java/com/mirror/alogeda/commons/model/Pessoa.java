@@ -10,7 +10,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "pessoas", schema = "mydb")
+@Table(name = "pessoas")
 @SequenceGenerator(name = "pessoas_seq", sequenceName = "pessoas_seq", allocationSize = 1)
 public class Pessoa {
 	@Id
@@ -24,6 +24,9 @@ public class Pessoa {
 	private Endereco endereco;
 	private String email;
 	private String telefone;
+	@JoinColumn(name = "usuarios_id")
+	@ManyToOne()
+	private Usuario usuario;
 
 	public int getId() {
 		return id;
@@ -79,6 +82,14 @@ public class Pessoa {
 
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 }

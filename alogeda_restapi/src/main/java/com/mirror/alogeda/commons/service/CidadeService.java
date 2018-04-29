@@ -8,12 +8,10 @@ import com.mirror.alogeda.commons.repository.CidadeRepository;
 
 @Service
 public class CidadeService extends CrudService<Cidade> {
-	private CidadeRepository cidadeRepository;
 
 	@Autowired
 	public CidadeService(CidadeRepository cidadeRepository) {
-		this.cidadeRepository = cidadeRepository;
-		setGenericRepository(cidadeRepository);
+		super(cidadeRepository);
 	}
 
 	}

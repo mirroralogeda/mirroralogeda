@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class CrudService<T> {
 private JpaRepository<T, Integer> genericRepository;
 
-protected void setGenericRepository(JpaRepository<T, Integer> genericRepository) {
+public CrudService(JpaRepository<T, Integer> genericRepository) {
 	this.genericRepository = genericRepository;
 }
 

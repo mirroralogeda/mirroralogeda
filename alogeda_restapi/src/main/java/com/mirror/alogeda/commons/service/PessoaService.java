@@ -8,12 +8,10 @@ import com.mirror.alogeda.commons.repository.PessoaRepository;
 
 @Service
 public class PessoaService extends CrudService<Pessoa> {
-	private PessoaRepository pessoaRepository;
 
 	@Autowired
 	public PessoaService(PessoaRepository pessoaRepository) {
-		this.pessoaRepository = pessoaRepository;
-		setGenericRepository(pessoaRepository);
+		super(pessoaRepository);
 	}
 
-	}
+}
