@@ -3,6 +3,7 @@ package com.mirror.alogeda;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.mirror.alogeda.commons.helper.ReflectionHelper;
 import com.mirror.alogeda.commons.infra.DomainExceptionMapper;
 

@@ -10,29 +10,28 @@ import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.mirror.alogeda.commons.exceptions.DomainException;
 import com.mirror.alogeda.commons.helper.responses.ApiResponse;
-import com.mirror.alogeda.commons.model.Endereco;
-import com.mirror.alogeda.commons.service.EnderecoService;
+import com.mirror.alogeda.commons.model.Pessoas;
+import com.mirror.alogeda.commons.service.PessoaService;
 
 @Component
-@Path("endereco")
-public class EnderecoResource {
+@Path("pessoas")
+public class PessoasResource {
 	@Autowired
-	private EnderecoService enderecoService;
+	private PessoaService pessoaService;
 
     @GET
     @Path("getall")
     public Response getAll() {
-        return ApiResponse.ok(enderecoService.getAll());
+        return ApiResponse.ok(pessoaService.getAll());
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("save")
-    public Response save(Endereco endereco) {
-        enderecoService.save(endereco);
+    public Response save(Pessoas pessoa) {
+        pessoaService.save(pessoa);
         return ApiResponse.ok();
     }
-    
+
 }

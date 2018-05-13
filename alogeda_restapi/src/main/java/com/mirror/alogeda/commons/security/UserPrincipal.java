@@ -8,13 +8,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.mirror.alogeda.commons.model.Usuario;
+import com.mirror.alogeda.commons.model.Usuarios;
 
 public class UserPrincipal implements UserDetails {
 	private static final long serialVersionUID = 7667483012755269183L;
-	private Usuario usr;
+	private Usuarios usr;
 
-	public UserPrincipal(Usuario usr) {
+	public UserPrincipal(Usuarios usr) {
 		this.usr = usr;
 	}
 

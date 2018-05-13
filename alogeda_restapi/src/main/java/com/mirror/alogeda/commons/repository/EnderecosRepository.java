@@ -3,9 +3,9 @@ package com.mirror.alogeda.commons.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.mirror.alogeda.commons.model.Endereco;
+import com.mirror.alogeda.commons.model.Enderecos;
 
 @Repository
-public interface EnderecoRepository extends JpaRepository<Endereco, Integer> {
+public interface EnderecosRepository extends JpaRepository<Enderecos, Integer> {
 
 }

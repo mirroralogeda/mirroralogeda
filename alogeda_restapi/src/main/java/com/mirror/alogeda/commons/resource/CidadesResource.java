@@ -11,26 +11,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.mirror.alogeda.commons.helper.responses.ApiResponse;
-import com.mirror.alogeda.commons.model.Usuario;
-import com.mirror.alogeda.commons.service.UsuarioService;
+import com.mirror.alogeda.commons.model.Cidades;
+import com.mirror.alogeda.commons.service.CidadeService;
 
 @Component
-@Path("usuario")
-public class UsuarioResource {
+@Path("cidades")
+public class CidadesResource {
 	@Autowired
-	private UsuarioService usuarioService;
+	private CidadeService cidadeService;
 
 	@GET
 	@Path("getall")
 	public Response getAll() {
-		return ApiResponse.ok(usuarioService.getAll());
+		return ApiResponse.ok(cidadeService.getAll());
 	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("save")
-	public Response save(Usuario usuario) {
-		usuarioService.save(usuario);
+	public Response save(Cidades cidade) {
+		cidadeService.save(cidade);
 		return ApiResponse.ok();
 	}
 
