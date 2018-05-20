@@ -17,13 +17,19 @@ import com.mirror.alogeda.commons.service.PessoaService;
 @Component
 @Path("pessoas")
 public class PessoasResource {
-	@Autowired
-	private PessoaService pessoaService;
+    @Autowired
+    private PessoaService pessoaService;
 
     @GET
     @Path("getall")
     public Response getAll() {
         return ApiResponse.ok(pessoaService.getAll());
+    }
+
+    @GET
+    @Path("BuscaPorId")
+    public Response BuscaPorId(int pessoaId) {
+        return ApiResponse.ok(pessoaService.buscaPorId(pessoaId));
     }
 
     @POST
