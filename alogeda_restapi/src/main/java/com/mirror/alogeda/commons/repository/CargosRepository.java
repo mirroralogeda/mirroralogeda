@@ -9,5 +9,5 @@ import com.mirror.alogeda.commons.model.Cargos;
 
 @Repository
 public interface CargosRepository extends JpaRepository<Cargos, Integer> {
-    public List<Cargos> buscarCargosAbertos();
+    // public List<Cargos> buscarCargosAbertos();
 }

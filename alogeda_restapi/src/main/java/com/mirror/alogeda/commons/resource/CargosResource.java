@@ -35,7 +35,7 @@ public class CargosResource {
     // @GET
     // @Path("CargosAbertos")
     // public Response buscarCargosAbertos(){
-        
+
     // }
 
     @POST
