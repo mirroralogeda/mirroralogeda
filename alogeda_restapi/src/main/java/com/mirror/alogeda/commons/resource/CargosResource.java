@@ -32,11 +32,11 @@ public class CargosResource {
         return ApiResponse.ok(cargoService.buscaPorId(entidadeId));
     }
 
-    @GET
-    @Path("CargosAbertos")
-    public Response buscarCargosAbertos(){
+    // @GET
+    // @Path("CargosAbertos")
+    // public Response buscarCargosAbertos(){
         
-    }
+    // }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
