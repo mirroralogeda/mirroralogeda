@@ -15,12 +15,12 @@ public class JerseyConfig extends ResourceConfig {
 
 		register(DomainExceptionMapper.class);
 		// Registra todas as classes nos pacotes REST
-registerPackage("com.mirror.alogeda.commons.resource");
+		registerPackage("com.mirror.alogeda.commons.resource");
 	}
 
 	public void registerPackage(String pkg) {
 		for (Class<?> c : ReflectionHelper.getAnnotedClasses(pkg, Component.class))
-	register(c);
+			register(c);
 	}
 
 }

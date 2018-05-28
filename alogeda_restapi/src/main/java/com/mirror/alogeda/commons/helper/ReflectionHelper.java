@@ -9,5 +9,4 @@ public final class ReflectionHelper {
 		Reflections r = new Reflections(pkg);
 		return r.getTypesAnnotatedWith(annotation);
 	}
-
 }

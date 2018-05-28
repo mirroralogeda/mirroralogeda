@@ -17,7 +17,6 @@ public class CargosService extends CrudService<Cargos> {
         super(cargosRepository);
     }
 
-    @Autowired
     public List<Cargos> buscarCargosAbertos() {
         return getAll().stream().filter(x -> x.getVagases().size() > 0).collect(Collectors.toList());
     }
