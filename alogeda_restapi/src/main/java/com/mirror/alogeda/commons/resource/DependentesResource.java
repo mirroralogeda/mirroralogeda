@@ -1,4 +1,4 @@
-package com.mirror.alogeda.commons.resource;
+/*package com.mirror.alogeda.commons.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -11,39 +11,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.mirror.alogeda.commons.helper.responses.ApiResponse;
-import com.mirror.alogeda.commons.model.Cargos;
-import com.mirror.alogeda.commons.service.CargosService;
+import com.mirror.alogeda.commons.model.Pessoas;
+import com.mirror.alogeda.commons.service.PessoaService;
 
 @Component
-@Path("cargos")
-public class CargosResource {
+@Path("pessoas")
+public class DependentesResource {
     @Autowired
-    private CargosService cargoService;
+    private PessoaService dependentesService;
 
     @GET
     @Path("getall")
     public Response getAll() {
-        return ApiResponse.ok(cargoService.getAll());
+        return ApiResponse.ok(dependentesService.getAll());
     }
 
     @GET
     @Path("BuscaPorId")
-    public Response buscaPorId(int entidadeId) {
-        return ApiResponse.ok(cargoService.buscaPorId(entidadeId));
+    public Response BuscaPorId(int dependentesId) {
+        return ApiResponse.ok(dependentesService.buscaPorId(dependentesId));
     }
-
-//    @GET
-//    @Path("CargosAbertos")
-//    public Response buscarCargosAbertos(){
-//        
-//    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("save")
-    public Response save(Cargos cargo) {
-        cargoService.save(cargo);
+    public Response save(Dependentes dependentes) {
+        dependentesService.save(dependentes);
         return ApiResponse.ok();
     }
 
-}
+}*/
