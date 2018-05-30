@@ -14,17 +14,19 @@ public class AlogedaApplication {
 		SpringApplication.run(AlogedaApplication.class, args);
 	}
 
-    @Bean
-    public CorsFilter corsFilter() {
-    	UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    	CorsConfiguration config = new CorsConfiguration();
-    	config.setAllowCredentials(true);
-    	config.addAllowedOrigin("*");
-    	config.addAllowedHeader("*");
-    	config.addAllowedMethod("GET");
-    	config.addAllowedMethod("POST");
-    	source.registerCorsConfiguration("/**", config);
-    	return new CorsFilter(source);
-    }
+	@Bean
+	public CorsFilter corsFilter() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowCredentials(true);
+		config.addExposedHeader("Authorization");
+		config.addAllowedOrigin("*");
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("GET");
+		config.addAllowedMethod("POST");
+		config.addAllowedMethod("OPTIONS");
+		source.registerCorsConfiguration("/**", config);
+		return new CorsFilter(source);
+	}
 
 }

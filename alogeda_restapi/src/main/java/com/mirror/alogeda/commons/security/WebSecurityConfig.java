@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Configuration
 @EnableWebSecurity
@@ -20,12 +21,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserDetailsServiceImpl userDetailsService;
 
+	@CrossOrigin
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.csrf().disable().authorizeRequests()
-		.antMatchers("/**").permitAll()
-		//.antMatchers(HttpMethod.POST, "/api/login").permitAll()
-				.anyRequest().authenticated().and()
+		httpSecurity.cors();
+		httpSecurity.csrf().disable().authorizeRequests()// .antMatchers("/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/api/login").permitAll().anyRequest().authenticated().and()
+				.addFilterBefore(new JWTLoginFilter("/api/login", authenticationManager()),
+						UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+		// OPTIONS NESSA BOSTA
+		httpSecurity.csrf().disable().authorizeRequests()// .antMatchers("/**").permitAll()
+				.antMatchers(HttpMethod.OPTIONS, "/api/login").permitAll().anyRequest().authenticated().and()
 				.addFilterBefore(new JWTLoginFilter("/api/login", authenticationManager()),
 						UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -34,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(authenticationProvider());
-		//auth.inMemoryAuthentication().getUserDetailsService().createUser(User.withUsername("admin").password("password").roles("admin").build());
+		// auth.inMemoryAuthentication().getUserDetailsService().createUser(User.withUsername("admin").password("password").roles("admin").build());
 	}
 
 	@Bean
@@ -43,7 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		authProvider.setUserDetailsService(userDetailsService);
 		authProvider.setPasswordEncoder(encoder());
 		return authProvider;
-			}
+	}
 
 	@Bean
 	public PasswordEncoder encoder() {

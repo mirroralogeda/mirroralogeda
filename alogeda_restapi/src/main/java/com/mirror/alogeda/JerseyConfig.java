@@ -1,9 +1,9 @@
 package com.mirror.alogeda;
 
 import org.glassfish.jersey.server.ResourceConfig;
+import org.springframework.security.config.http.CorsBeanDefinitionParser;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.mirror.alogeda.commons.helper.ReflectionHelper;
 import com.mirror.alogeda.commons.infra.DomainExceptionMapper;
 
@@ -12,7 +12,7 @@ public class JerseyConfig extends ResourceConfig {
 
 	public JerseyConfig() {
 		super();
-
+		
 		register(DomainExceptionMapper.class);
 		// Registra todas as classes nos pacotes REST
 		registerPackage("com.mirror.alogeda.commons.resource");
