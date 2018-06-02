@@ -4,6 +4,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -24,9 +26,11 @@ public class AtestadosResource {
 
 	@GET
 	@Path("getall")
-	public Response getAll() {
-		return ApiResponse.ok(atestadosService.getAll());
-	}
+
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAll( @QueryParam("funcionario")  int funcionario) {
+		return ApiResponse.ok(atestadosService.findByFuncionario(funcionario));
+	} 
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -35,5 +39,12 @@ public class AtestadosResource {
 		atestadosService.save(atestados);
 		return ApiResponse.ok();
 	}
+	@POST
 
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("delete")
+	public Response delete( Atestados atestados) {
+		atestadosService.delete(atestados);
+		return ApiResponse.ok();
+	}
 }

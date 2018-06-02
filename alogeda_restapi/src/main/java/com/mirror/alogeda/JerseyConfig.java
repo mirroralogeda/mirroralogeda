@@ -1,6 +1,7 @@
 package com.mirror.alogeda;
 
 import org.glassfish.jersey.server.ResourceConfig;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.CorsBeanDefinitionParser;
 import org.springframework.stereotype.Component;
 
@@ -22,5 +23,6 @@ public class JerseyConfig extends ResourceConfig {
 		for (Class<?> c : ReflectionHelper.getAnnotedClasses(pkg, Component.class))
 			register(c);
 	}
-
+	
+	
 }

@@ -14,9 +14,14 @@ import com.mirror.alogeda.commons.repository.CargosRepository;
 @Service
 public class AtestadosService extends CrudService<Atestados> {
 
+	AtestadosRepository atestadosRepository;
     @Autowired
     public AtestadosService(AtestadosRepository AtestadosRepository) {
         super(AtestadosRepository);
+        this.atestadosRepository = AtestadosRepository;
     }
-
+    public List<Atestados> findByFuncionario(int funcionario){
+    	
+    	return atestadosRepository.findByFuncionario(funcionario);
+    }
 }
