@@ -2,6 +2,7 @@ package com.mirror.alogeda.commons.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
@@ -11,47 +12,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.mirror.alogeda.commons.helper.responses.ApiResponse;
-import com.mirror.alogeda.commons.model.Cargos;
-import com.mirror.alogeda.commons.service.CargosService;
+import com.mirror.alogeda.commons.model.Cbo;
+import com.mirror.alogeda.commons.service.CboService;
 
 @Component
-@Path("cargos")
-public class CargosResource {
+@Path("cbo")
+public class CboResource {
     @Autowired
-    private CargosService cargoService;
+    private CboService cboService;
 
     @GET
     @Path("getall")
     public Response getAll() {
-        return ApiResponse.ok(cargoService.getAll());
+        return ApiResponse.ok(cboService.getAll());
     }
 
     @GET
     @Path("BuscaPorId")
     public Response buscaPorId(int entidadeId) {
-        return ApiResponse.ok(cargoService.buscaPorId(entidadeId));
+        return ApiResponse.ok(cboService.buscaPorId(entidadeId));
     }
-
-//    @GET
-//    @Path("CargosAbertos")
-//    public Response buscarCargosAbertos(){
-//        
-//    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("save")
-    public Response save(Cargos cargo) {
-        cargoService.save(cargo);
+    public Response save(Cbo cbo) {
+        cboService.save(cbo);
         return ApiResponse.ok();
     }
 
-    @POST
+    @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("delete")
-    public Response delete(Cargos cargo) {
-        cargoService.delete(cargo);
+    public Response delete(Cbo cbo) {
+        cboService.delete(cbo);
         return ApiResponse.ok();
     }
-
 }
