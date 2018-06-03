@@ -1,5 +1,11 @@
 package com.mirror.alogeda.commons.infra;
 
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,10 +19,11 @@ public class JacksonSpringConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public ObjectMapper objectMapper(){
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.registerModule(new Hibernate5Module());
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new Hibernate5Module());
+		mapper.setDateFormat(new SimpleDateFormat("dd/MM/yyyy hh:mm:ss"));
 
-		return objectMapper;
+		return mapper;
     }
     
 }
