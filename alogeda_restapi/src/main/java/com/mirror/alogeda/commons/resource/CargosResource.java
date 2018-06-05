@@ -23,7 +23,7 @@ public class CargosResource {
     @GET
     @Path("getall")
     public Response getAll() {
-        return ApiResponse.ok(cargoService.getAll());
+        return ApiResponse.ok(cargoService.findAllCompleto());
     }
 
     @GET

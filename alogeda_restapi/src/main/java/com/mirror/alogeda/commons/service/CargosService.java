@@ -12,6 +12,9 @@ import com.mirror.alogeda.commons.repository.CargosRepository;
 @Service
 public class CargosService extends CrudService<Cargos> {
 
+	@Autowired
+	private CargosRepository repository;
+	
     @Autowired
     public CargosService(CargosRepository cargosRepository) {
         super(cargosRepository);
@@ -19,6 +22,11 @@ public class CargosService extends CrudService<Cargos> {
 
     public List<Cargos> buscarCargosAbertos() {
         return getAll().stream().filter(x -> x.getVagases().size() > 0).collect(Collectors.toList());
+    }
+
+    
+    public List<Cargos> findAllCompleto() {
+        return repository.findAllCompleto();
     }
 
 }
