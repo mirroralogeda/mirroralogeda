@@ -1,5 +1,6 @@
 package com.mirror.alogeda.commons.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,10 +18,9 @@ import com.mirror.alogeda.commons.model.TabInss;
 import com.mirror.alogeda.commons.repository.EventosRepository;
 import com.mirror.alogeda.commons.repository.SalariosRepository;
 import com.mirror.alogeda.commons.repository.TabInssRepository;
-
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
-import net.objecthunter.exp4j.function.Function;
+import com.udojava.evalex.AbstractFunction;
+import com.udojava.evalex.Expression;
+import com.udojava.evalex.Function;
 
 @Service
 public class CalculosService {
@@ -90,17 +90,17 @@ private class Calculadora{
 
 	public double eval(String expr, Salarios sal) {
 		String[] vars = getVars(expr);
-		Map<String, Double> varVals = getValoresVariaveiss(vars, sal);
+		Map<String, BigDecimal> varVals = getValoresVariaveiss(vars, sal);
 
-		Expression e = new ExpressionBuilder(expr)
-				.variables(vars)
-				.functions(getFuncoes())
-				.build();
+		Expression e = new Expression(expr);
 
 		for (String v : vars)
 			e = e.setVariable(v, varVals.get(v));
 
-		return e.evaluate();
+		for (Function f : getFuncoes())
+			e.addFunction(f);
+
+		return e.eval().doubleValue();
 	}
 
 	private Function[] getFuncoes() {
@@ -118,13 +118,13 @@ return new Function[] { getFuncTabInss() };
 		return vars.toArray(new String[vars.size()]);
 	}
 
-	public Map<String, Double> getValoresVariaveiss(String[] vars, Salarios sal) {
-		Map<String, Double> varVals = new HashMap<String, Double>();
+	public Map<String, BigDecimal> getValoresVariaveiss(String[] vars, Salarios sal) {
+		Map<String, BigDecimal> varVals = new HashMap<String, BigDecimal>();
 
 		for (String v : vars) {
 			switch (v) {
 			case SALARIO_BASE:
-				varVals.put(SALARIO_BASE, sal.getValor());
+				varVals.put(SALARIO_BASE, new BigDecimal(sal.getValor()));
 				break;
 			default:
 				break;
@@ -135,17 +135,17 @@ return new Function[] { getFuncTabInss() };
 	}
 
 	public Function getFuncTabInss() {
-		return new Function("tab_inss", 1) {
+		return new AbstractFunction("tab_inss", 1) {
 
 		    @Override
-		    public double apply(double... args) {
-		    	double val = args[0];
-		    	Optional<TabInss> faixa = tabInss.stream().filter(f -> val >= f.getValInicial() && val <= f.getValFinal()).findFirst();
+		    public BigDecimal eval(List<BigDecimal> args) {
+		    	BigDecimal val = args.get(0);
+		    	Optional<TabInss> faixa = tabInss.stream().filter(f -> val.compareTo(new BigDecimal(f.getValInicial())) >= 0 && val.compareTo(new BigDecimal(f.getValFinal())) <= 0).findFirst();
 
 		    	if (faixa.isPresent())
-		    		return faixa.get().getPercentual();
+		    		return new BigDecimal(faixa.get().getPercentual());
 
-		    	return tabInss.get(tabInss.size()).getPercentual();
+		    	return new BigDecimal(tabInss.get(tabInss.size()).getPercentual());
 		    }
 		};
 		}
