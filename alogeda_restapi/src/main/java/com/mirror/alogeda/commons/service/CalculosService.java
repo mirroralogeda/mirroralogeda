@@ -15,9 +15,11 @@ import com.mirror.alogeda.commons.model.Calculos;
 import com.mirror.alogeda.commons.model.Eventos;
 import com.mirror.alogeda.commons.model.Salarios;
 import com.mirror.alogeda.commons.model.TabInss;
+import com.mirror.alogeda.commons.model.TabSalFamilia;
 import com.mirror.alogeda.commons.repository.EventosRepository;
 import com.mirror.alogeda.commons.repository.SalariosRepository;
 import com.mirror.alogeda.commons.repository.TabInssRepository;
+import com.mirror.alogeda.commons.repository.TabSalFamiliaRepository;
 import com.udojava.evalex.AbstractFunction;
 import com.udojava.evalex.Expression;
 import com.udojava.evalex.Function;
@@ -30,11 +32,13 @@ public class CalculosService {
 	private SalariosRepository salRepo;
 	@Autowired
 	private TabInssRepository tabInssRepo;
+	@Autowired
+	private TabSalFamiliaRepository tabSalRepo;
 
 
 	public List<Calculos> Calcula() {
 		List<Calculos> calcs = new ArrayList<Calculos>();
-		Calculadora calculadora = new Calculadora(tabInssRepo.findByPerFinalIsNull());
+		Calculadora calculadora = new Calculadora(tabInssRepo.findByPerFinalIsNull(), tabSalRepo.findByPerFinalIsNull());
 
 		// Cada funcionario tem um salario, logo iterando pelos salarios vigentes tambem
 		// se itera pelos funcionarios.
@@ -42,6 +46,11 @@ public class CalculosService {
 			for (Eventos eve : eveRepo.findAll()) {
 				double valor = 0;
 				valor += calculadora.eval(eve.getFormula(), sal);
+
+				if (eve.getValorMaximo() != null && eve.getValorMaximo() != 0 && valor >= eve.getValorMaximo())
+					valor = eve.getValorMaximo();
+				else if (eve.getValorMinimo() != null && eve.getValorMinimo() != 0 && valor <= eve.getValorMinimo())
+					valor = eve.getValorMinimo();
 
 				// Assume para o tipo: 1 = neutro, 2 = provento e 3 = desconto
 				// Nota, mudar para enum assim que possivel
@@ -76,6 +85,7 @@ public class CalculosService {
 
 private class Calculadora{
 	private List<TabInss> tabInss;
+	private List<TabSalFamilia> tabSalFamilia;
 	private final String SALARIO_BASE = "salario_base";
 
 	// Nomes das ariaveis disponiveis
@@ -83,9 +93,11 @@ private class Calculadora{
 	private final String[] variaveis = new String[] { SALARIO_BASE };
 
 	// O construtor recebe objetos que tem potencial de serem usados em varios calculos.
-	public Calculadora(List<TabInss> tabInss) {
+	public Calculadora(List<TabInss> tabInss, List<TabSalFamilia> tabSalFamilia) {
 		this.tabInss = tabInss;
+		this.tabSalFamilia = tabSalFamilia;
 		this.tabInss.sort((t1, t2) -> t1.getValInicial().compareTo(t2.getValInicial()));
+		this.tabSalFamilia.sort((t1, t2) -> t1.getValInicial().compareTo(t2.getValInicial()));
 	}
 
 	public double eval(String expr, Salarios sal) {
@@ -104,7 +116,7 @@ private class Calculadora{
 	}
 
 	private Function[] getFuncoes() {
-return new Function[] { getFuncTabInss() };
+return new Function[] { getFuncTabInss(), getFuncTabSalFamilia() };
 	}
 
 	// Retorna os nomes das variaveis contidas nas formulas
@@ -149,6 +161,22 @@ return new Function[] { getFuncTabInss() };
 		    }
 		};
 		}
+
+public Function getFuncTabSalFamilia() {
+	return new AbstractFunction("tab_sal_familia", 1) {
+
+	    @Override
+	    public BigDecimal eval(List<BigDecimal> args) {
+	    	BigDecimal val = args.get(0);
+	    	Optional<TabSalFamilia> faixa = tabSalFamilia.stream().filter(f -> val.compareTo(new BigDecimal(f.getValInicial())) >= 0 && val.compareTo(new BigDecimal(f.getValFinal())) <= 0).findFirst();
+
+	    	if (faixa.isPresent())
+	    		return new BigDecimal(faixa.get().getValor());
+
+	    	return BigDecimal.ZERO;
+	    }
+	};
+	}
 }
 
 }
