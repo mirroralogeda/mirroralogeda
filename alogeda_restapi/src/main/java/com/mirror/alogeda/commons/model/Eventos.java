@@ -2,18 +2,21 @@ package com.mirror.alogeda.commons.model;
 // Generated 12/05/2018 21:02:31 by Hibernate Tools 4.3.1
 
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.SequenceGenerator;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -30,14 +33,14 @@ public class Eventos  implements java.io.Serializable {
      private int id;
      private GrupoEventos grupoEventos;
      private String descricao;
-     private Integer tipo;
+     private TipoEvento tipo;
      private String formula;
      private Short automatico;
      private Double referencia;
      private Double percentual;
      private Double valorMinimo;
      private Double valorMaximo;
-     private String incidencias;
+     private Set<Eventos> incidencias;
      private Integer ordemCalculo;
      private Set<EveFixos> eveFixoses = new HashSet<EveFixos>(0);
      private Set<Calculos> calculoses = new HashSet<Calculos>(0);
@@ -50,7 +53,7 @@ public class Eventos  implements java.io.Serializable {
         this.id = id;
         this.grupoEventos = grupoEventos;
     }
-    public Eventos(int id, GrupoEventos grupoEventos, String descricao, Integer tipo, String formula, Short automatico, Double referencia, Double percentual, Double valorMinimo, Double valorMaximo, String incidencias, Integer ordemCalculo, Set<EveFixos> eveFixoses, Set<Calculos> calculoses) {
+    public Eventos(int id, GrupoEventos grupoEventos, String descricao, TipoEvento tipo, String formula, Short automatico, Double referencia, Double percentual, Double valorMinimo, Double valorMaximo, Set<Eventos> incidencias, Integer ordemCalculo, Set<EveFixos> eveFixoses, Set<Calculos> calculoses) {
        this.id = id;
        this.grupoEventos = grupoEventos;
        this.descricao = descricao;
@@ -102,11 +105,11 @@ public class Eventos  implements java.io.Serializable {
 
     
     @Column(name="tipo")
-    public Integer getTipo() {
+    public TipoEvento getTipo() {
         return this.tipo;
     }
     
-    public void setTipo(Integer tipo) {
+    public void setTipo(TipoEvento tipo) {
         this.tipo = tipo;
     }
 
@@ -170,13 +173,13 @@ public class Eventos  implements java.io.Serializable {
         this.valorMaximo = valorMaximo;
     }
 
-    
-    @Column(name="incidencias", length=88888)
-    public String getIncidencias() {
+    @ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(name="eventos_incidencias", schema="public")
+    public Set<Eventos> getIncidencias() {
         return this.incidencias;
     }
     
-    public void setIncidencias(String incidencias) {
+    public void setIncidencias(Set<Eventos> incidencias) {
         this.incidencias = incidencias;
     }
 

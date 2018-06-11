@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mirror.alogeda.commons.exceptions.DomainException;
 import com.mirror.alogeda.commons.model.Calculos;
 import com.mirror.alogeda.commons.model.Dependentes;
 import com.mirror.alogeda.commons.model.Eventos;
@@ -20,6 +21,7 @@ import com.mirror.alogeda.commons.model.Salarios;
 import com.mirror.alogeda.commons.model.TabInss;
 import com.mirror.alogeda.commons.model.TabIrrf;
 import com.mirror.alogeda.commons.model.TabSalFamilia;
+import com.mirror.alogeda.commons.model.TipoEvento;
 import com.mirror.alogeda.commons.repository.EventosRepository;
 import com.mirror.alogeda.commons.repository.SalariosRepository;
 import com.mirror.alogeda.commons.repository.TabInssRepository;
@@ -53,7 +55,7 @@ public class CalculosService {
 
 			for (Eventos eve : eveRepo.findAllByOrderByOrdemCalculoAsc()) {
 				double valor = 0;
-				valor += calculadora.eval(eve.getFormula(), eve);
+				valor += calculadora.eval(eve).doubleValue();
 
 				if (eve.getValorMaximo() != null && eve.getValorMaximo() != 0 && valor >= eve.getValorMaximo())
 					valor = eve.getValorMaximo();
@@ -79,15 +81,18 @@ public class CalculosService {
 		private List<TabInss> tabInss;
 		private List<TabSalFamilia> tabSalFamilia;
 		private List<TabIrrf> tabIrrf;
+		private Map<Eventos, BigDecimal> eventosCalculados;
 
 		private static final String SALARIO_BASE = "salario_base";
 		private static final String SALARIO_ATUAL = "salario_atual";
+		private static final String SALARIO_INCIDENCIA = "salario_incidencia";
 		private static final String DEPENDENTES_SAL_FAMILIA = "dependentes_sal_familia";
 		private static final String DEPENDENTES_IRRF = "dependentes_irrf";
 
 		// Nomes das ariaveis disponiveis
 		// Alternativas: vir do banco, ser array de enum normal, ou enum com Bit Flags
-		private final String[] variaveis = new String[] { SALARIO_BASE, SALARIO_ATUAL, DEPENDENTES_SAL_FAMILIA, DEPENDENTES_IRRF };
+		private final String[] variaveis = new String[] { SALARIO_BASE, SALARIO_ATUAL, DEPENDENTES_SAL_FAMILIA,
+				DEPENDENTES_IRRF };
 
 		public Calculadora(Salarios sal) {
 			this.salario = sal;
@@ -95,13 +100,26 @@ public class CalculosService {
 			this.tabInss = tabInssRepo.findByVigencia(new Date());
 			this.tabSalFamilia = tabSalRepo.findByVigencia(new Date());
 			this.tabIrrf = tabIrrfRepo.findByVigencia(new Date());
+			this.eventosCalculados = new HashMap<Eventos, BigDecimal>();
 		}
 
-		public double getSalarioAtual() {
-			return salarioAtual.doubleValue();
+		public BigDecimal getSalarioAtual() {
+			return salarioAtual;
 		}
 
-		public double eval(String expr, Eventos eve) {
+		public BigDecimal eval(Eventos eve) {
+			if (eventosCalculados.containsKey(eve))
+				return eventosCalculados.get(eve);
+
+			BigDecimal salarioInc = new BigDecimal(salario.getValor());
+			for (Eventos inc : eve.getIncidencias()) {
+				if (inc.getTipo() == TipoEvento.PROVENTO)
+					salarioInc = salarioInc.add(eval(inc));
+				else if (inc.getTipo() == TipoEvento.DESCONTO)
+					salarioInc = salarioInc.subtract(eval(inc));
+			}
+
+			String expr = eve.getFormula();
 			expr = expr.replace(".", "").replace(",", ".");
 			String[] vars = getVars(expr);
 			Map<String, BigDecimal> varVals = getValoresVariaveiss(vars);
@@ -111,20 +129,21 @@ public class CalculosService {
 			for (String v : vars)
 				e = e.setVariable(v, varVals.get(v));
 
+			if (expr.contains(SALARIO_INCIDENCIA))
+				e = e.setVariable(SALARIO_INCIDENCIA, salarioInc);
+
 			for (Function f : getFuncoes())
 				e.addFunction(f);
 
-			e.setPrecision(2);
 			BigDecimal res = e.eval();
+			eventosCalculados.put(eve, res);
 
-			// Assume para o tipo: 1 = neutro, 2 = provento e 3 = desconto
-			// Nota, mudar para enum assim que possivel
-			if (eve.getTipo() == 2)
+			if (eve.getTipo() == TipoEvento.PROVENTO)
 				salarioAtual = salarioAtual.add(res);
-			else if (eve.getTipo() == 3)
+			else if (eve.getTipo() == TipoEvento.DESCONTO)
 				salarioAtual = salarioAtual.subtract(res);
 
-			return res.doubleValue();
+			return res;
 		}
 
 		// Retorna os nomes das variaveis contidas nas formulas
@@ -141,27 +160,29 @@ public class CalculosService {
 		public Map<String, BigDecimal> getValoresVariaveiss(String[] vars) {
 			Map<String, BigDecimal> varVals = new HashMap<String, BigDecimal>();
 
-			for (String v : vars) {
-				switch (v) {
-				case SALARIO_BASE:
-					varVals.put(SALARIO_BASE, new BigDecimal(salario.getValor()));
-					break;
-				case SALARIO_ATUAL:
-					varVals.put(SALARIO_ATUAL, salarioAtual);
-					break;
-				case DEPENDENTES_SAL_FAMILIA:
-					varVals.put(DEPENDENTES_SAL_FAMILIA, new BigDecimal(salario.getFuncionarios().getDependenteses().stream().filter(Dependentes::getSalarioFamilia).collect(Collectors.toList()).size()));
-					break;
-				case DEPENDENTES_IRRF:
-					varVals.put(DEPENDENTES_IRRF, new BigDecimal(salario.getFuncionarios().getDependenteses().stream()
-							.filter(Dependentes::getImpostoRenda).collect(Collectors.toList()).size()));
-					break;
-				default:
-					break;
-				}
-			}
+			for (String v : vars)
+				varVals.put(v, getValorVariavel(v));
 
 			return varVals;
+		}
+
+		private BigDecimal getValorVariavel(String v) {
+			switch (v) {
+			case SALARIO_BASE:
+				return new BigDecimal(salario.getValor());
+			case SALARIO_ATUAL:
+				return salarioAtual;
+			case DEPENDENTES_SAL_FAMILIA:
+				return new BigDecimal(salario.getFuncionarios().getDependenteses().stream()
+						.filter(Dependentes::getSalarioFamilia).collect(Collectors.counting()).intValue());
+			case DEPENDENTES_IRRF:
+				return new BigDecimal(salario.getFuncionarios().getDependenteses().stream()
+						.filter(Dependentes::getImpostoRenda).collect(Collectors.counting()).intValue());
+			default:
+				break;
+			}
+
+			throw new DomainException("Variável " + v + " não foi reconhecida.");
 		}
 
 		private Function[] getFuncoes() {
