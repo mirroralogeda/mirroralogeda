@@ -17,6 +17,7 @@ public class PessoaService extends CrudService<Pessoas> {
 	@Autowired
 	public PessoaService(PessoasRepository pessoaRepository) {
 		super(pessoaRepository);
+		this.pessoaRepository = pessoaRepository;
 	}
     public Pessoas findByCpf(String cpf){
     	return pessoaRepository.findByCpfContaining(cpf);
