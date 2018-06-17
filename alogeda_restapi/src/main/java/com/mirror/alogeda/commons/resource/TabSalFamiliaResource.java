@@ -34,4 +34,13 @@ public class TabSalFamiliaResource {
 		return ApiResponse.ok();
 	}
 
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("delete")
+	public Response delete(TabSalFamilia tabSalFamilia) {
+		tabSalFamiliaService.delete(tabSalFamilia);
+		return ApiResponse.ok();
+	}
+
 }
+
