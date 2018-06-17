@@ -4,6 +4,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +21,14 @@ public class FuncionariosResource {
 
     @GET
     @Path("getall")
-    public Response getAll() {
-        return ApiResponse.ok(Service.getAll());
+    public Response getAll( @QueryParam("nome")  String  nome) {
+        return ApiResponse.ok(Service.findByName(nome));
     }
 
     @GET
     @Path("BuscaPorId")
-    public Response BuscaPorId(int entidadeId) {
-        return ApiResponse.ok(Service.buscaPorId(entidadeId));
+    public Response BuscaPorId( @QueryParam("entidadeId") int entidadeId) {
+        return ApiResponse.ok(Service.buscaId(entidadeId));
     }
 
     @POST
