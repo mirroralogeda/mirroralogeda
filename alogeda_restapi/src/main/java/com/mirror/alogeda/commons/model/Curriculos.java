@@ -49,10 +49,10 @@ public class Curriculos  implements java.io.Serializable {
     }
 
 	
-    public Curriculos(int id, Pessoas pessoas, Vagas vagas) {
+    public Curriculos(int id, Pessoas pessoas) {
         this.id = id;
         this.pessoas = pessoas;
-        this.vagas = vagas;
+
     }
     public Curriculos(int id, Pessoas pessoas, Vagas vagas, Date dataModificacao, String descricao, Short aprovadoSelecao, String motivo, String pdf, Short aprovadoEntrevista, Set<Formacoes> formacoeses, Set<Experiencias> experienciases, Set<Habilidades> habilidadeses) {
        this.id = id;

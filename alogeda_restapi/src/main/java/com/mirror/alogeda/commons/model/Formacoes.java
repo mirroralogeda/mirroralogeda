@@ -77,7 +77,7 @@ public class Formacoes  implements java.io.Serializable {
         this.curriculos = curriculos;
     }
 
-@ManyToOne(fetch=FetchType.LAZY)
+@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="escolaridade_id", nullable=false)
     public Escolaridade getEscolaridade() {
         return this.escolaridade;

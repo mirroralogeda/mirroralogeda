@@ -206,7 +206,7 @@ public class Pessoas  implements java.io.Serializable {
         this.dataNascimento = dataNascimento;
     }
 
-@OneToMany(fetch=FetchType.LAZY, mappedBy="pessoas")
+@OneToMany(fetch=FetchType.EAGER, mappedBy="pessoas")
     public Set<Curriculos> getCurriculoses() {
         return this.curriculoses;
     }
