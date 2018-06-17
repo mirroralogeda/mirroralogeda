@@ -4,6 +4,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -31,6 +33,13 @@ public class PessoasResource {
     public Response BuscaPorId(int pessoaId) {
         return ApiResponse.ok(pessoaService.buscaPorId(pessoaId));
     }
+    
+    @GET
+	@Path("getbycpf")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAll( @QueryParam("cpf")  String cpf) {
+    		return ApiResponse.ok(pessoaService.findByCpf(cpf));
+	}
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

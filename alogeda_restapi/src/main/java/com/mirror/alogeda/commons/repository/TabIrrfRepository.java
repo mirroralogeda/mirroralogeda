@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.mirror.alogeda.commons.model.TabInss;
+import com.mirror.alogeda.commons.model.TabIrrf;
 
 
 @Repository
-public interface TabInssRepository extends JpaRepository<TabInss, Integer> {
-	@Query("SELECT t FROM TabInss t WHERE ?1 between t.perInicial and t.perFinal")
-	List<TabInss> findByVigencia(Date data);
+public interface TabIrrfRepository extends JpaRepository<TabIrrf, Integer> {
+	@Query("SELECT t FROM TabIrrf t WHERE ?1 between t.perInicial and t.perFinal")
+	List<TabIrrf> findByVigencia(Date data);
 }

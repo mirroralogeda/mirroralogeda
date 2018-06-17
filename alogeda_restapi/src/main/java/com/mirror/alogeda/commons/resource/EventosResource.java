@@ -37,4 +37,12 @@ public class EventosResource {
         Service.save(entidade);
         return ApiResponse.ok();
     }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("delete")
+    public Response delete(Eventos entidade) {
+        Service.delete(entidade);
+        return ApiResponse.ok();
+    }
 }
