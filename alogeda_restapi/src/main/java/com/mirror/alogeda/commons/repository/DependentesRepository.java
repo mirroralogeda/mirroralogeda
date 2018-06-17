@@ -11,6 +11,6 @@ import com.mirror.alogeda.commons.model.Dependentes;
 
 @Repository
 public interface DependentesRepository extends JpaRepository<Dependentes, Integer> {
-	@Query ("select d from Dependentes d where d.funcionarios.id = ?1")
+	@Query ("select d from Dependentes d where d.funcionarios.id = ?1 order by dataNascimento")
 	List<Dependentes> findByFuncionario(int funcionario);
 }
