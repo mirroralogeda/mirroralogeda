@@ -33,13 +33,13 @@ public class PessoasResource {
     public Response BuscaPorId(int pessoaId) {
         return ApiResponse.ok(pessoaService.buscaPorId(pessoaId));
     }
-    
+
     @GET
-	@Path("getbycpf")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAll( @QueryParam("cpf")  String cpf) {
-    		return ApiResponse.ok(pessoaService.findByCpf(cpf));
-	}
+    @Path("getbycpf")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAll(@QueryParam("cpf") String cpf) {
+        return ApiResponse.ok(pessoaService.findByCpf(cpf));
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
