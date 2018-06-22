@@ -9,14 +9,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.mirror.alogeda.commons.exceptions.DomainException;
 import com.mirror.alogeda.commons.model.Calculos;
 import com.mirror.alogeda.commons.model.Dependentes;
 import com.mirror.alogeda.commons.model.Eventos;
+import com.mirror.alogeda.commons.model.Funcionarios;
 import com.mirror.alogeda.commons.model.Salarios;
 import com.mirror.alogeda.commons.model.TabInss;
 import com.mirror.alogeda.commons.model.TabIrrf;
@@ -30,6 +27,10 @@ import com.mirror.alogeda.commons.repository.TabSalFamiliaRepository;
 import com.udojava.evalex.AbstractFunction;
 import com.udojava.evalex.Expression;
 import com.udojava.evalex.Function;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CalculosService {
@@ -54,8 +55,10 @@ public class CalculosService {
 			Calculadora calculadora = new Calculadora(sal);
 
 			for (Eventos eve : eveRepo.findAllByOrderByOrdemCalculoAsc()) {
-				double valor = 0;
-				valor += calculadora.eval(eve).doubleValue();
+				if (isEventoFixo(eve) && !isEventoFixoParaFuncionario(eve, sal.getFuncionarios()))
+					continue;
+
+				double valor = calculadora.eval(eve).doubleValue();
 
 				if (eve.getValorMaximo() != null && eve.getValorMaximo() != 0 && valor >= eve.getValorMaximo())
 					valor = eve.getValorMaximo();
@@ -67,12 +70,23 @@ public class CalculosService {
 				calc.setFuncionarios(sal.getFuncionarios());
 				calc.setEventos(eve);
 				calc.setValor(valor);
-				calc.setReferencia(eve.getReferencia());
 				calcs.add(calc);
 			}
 		}
 
 		return calcs;
+	}
+
+	private boolean isEventoFixo(Eventos eve) {
+		return eve.getEveFixoses().size() > 0;
+	}
+
+	private boolean isEventoFixoParaFuncionario(Eventos eve, Funcionarios fun) {
+		Date dataAtual = new Date();
+		return eve.getEveFixoses().stream()
+				.filter(ef -> ef.getFuncionarios().getId() == fun.getId()
+						&& dataAtual.compareTo(ef.getPerInicial()) >= 0 && dataAtual.compareTo(ef.getPerFinal()) <= 0)
+				.findFirst().isPresent();
 	}
 
 	private class Calculadora {
@@ -101,10 +115,6 @@ public class CalculosService {
 			this.tabSalFamilia = tabSalRepo.findByVigencia(new Date());
 			this.tabIrrf = tabIrrfRepo.findByVigencia(new Date());
 			this.eventosCalculados = new HashMap<Eventos, BigDecimal>();
-		}
-
-		public BigDecimal getSalarioAtual() {
-			return salarioAtual;
 		}
 
 		public BigDecimal eval(Eventos eve) {
