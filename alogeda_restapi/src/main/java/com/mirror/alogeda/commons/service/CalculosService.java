@@ -1,6 +1,7 @@
 package com.mirror.alogeda.commons.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,12 +15,18 @@ import com.mirror.alogeda.commons.model.Calculos;
 import com.mirror.alogeda.commons.model.Dependentes;
 import com.mirror.alogeda.commons.model.Eventos;
 import com.mirror.alogeda.commons.model.Funcionarios;
+import com.mirror.alogeda.commons.model.ParametrosFolha;
 import com.mirror.alogeda.commons.model.Salarios;
 import com.mirror.alogeda.commons.model.TabInss;
 import com.mirror.alogeda.commons.model.TabIrrf;
 import com.mirror.alogeda.commons.model.TabSalFamilia;
 import com.mirror.alogeda.commons.model.TipoEvento;
+import com.mirror.alogeda.commons.model.viewmodel.FolhaFuncionario;
+import com.mirror.alogeda.commons.model.viewmodel.ItemFolha;
+import com.mirror.alogeda.commons.model.viewmodel.PeriodoFolha;
+import com.mirror.alogeda.commons.repository.CalculosRepository;
 import com.mirror.alogeda.commons.repository.EventosRepository;
+import com.mirror.alogeda.commons.repository.ParametrosFolhaRepository;
 import com.mirror.alogeda.commons.repository.SalariosRepository;
 import com.mirror.alogeda.commons.repository.TabInssRepository;
 import com.mirror.alogeda.commons.repository.TabIrrfRepository;
@@ -35,6 +42,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CalculosService {
 	@Autowired
+	private CalculosRepository calcRepo;
+	@Autowired
+	private ParametrosFolhaRepository prfRepo;
+	@Autowired
 	private EventosRepository eveRepo;
 	@Autowired
 	private SalariosRepository salRepo;
@@ -47,6 +58,18 @@ public class CalculosService {
 
 	@Transactional
 	public List<Calculos> Calcula() {
+		List<ParametrosFolha> prfs = prfRepo.findByVigencia(new Date());
+
+		if (prfs.size() == 0)
+			throw new DomainException("Não há períodos abertos para a data atual.");
+
+		return Calcula(prfs.get(0));
+	}
+
+	@Transactional
+	public List<Calculos> Calcula(ParametrosFolha parametro) {
+		Date dataCalculo = new Date();
+		String idGrupo = dataCalculo.toString();
 		List<Calculos> calcs = new ArrayList<Calculos>();
 
 		// Cada funcionario tem um salario, logo iterando pelos salarios vigentes tambem
@@ -66,16 +89,77 @@ public class CalculosService {
 					valor = eve.getValorMinimo();
 
 				Calculos calc = new Calculos();
-				calc.setDataCalculo(new Date());
+				calc.setDataCalculo(dataCalculo);
+				calc.setIdGrupoCalc(idGrupo);
+				calc.setPerIncial(parametro.getPerInicial());
+				calc.setPerFinal(parametro.getPerFinal());
 				calc.setFuncionarios(sal.getFuncionarios());
 				calc.setEventos(eve);
 				calc.setValor(valor);
+				calcRepo.save(calc);
 				calcs.add(calc);
 			}
 		}
 
 		return calcs;
 	}
+
+	// Otimizar (criar consultas) assim que possivel
+	@Transactional
+	public List<PeriodoFolha> getPeriodos() {
+		List<PeriodoFolha> periodos = new ArrayList<>();
+		List<Calculos> calcs = calcRepo.findAll();
+
+		Map<Object, List<Calculos>> perCalcGrup = calcs.stream()
+				.collect(Collectors.groupingBy(Calculos::getIdGrupoCalc));
+
+		for (Object o : perCalcGrup.keySet()) {
+			List<Calculos> grupCalc = perCalcGrup.get(o);
+			Calculos ex = grupCalc.get(0);
+			periodos.add(
+					new PeriodoFolha(ex.getPerIncial(), ex.getPerFinal(), ex.getDataCalculo(), ex.getIdGrupoCalc()));
+		}
+
+		return periodos;
+	}
+
+	@Transactional
+public List<FolhaFuncionario> getFolhas(String idGrupoCalc) {
+	List<FolhaFuncionario> folhas = new ArrayList<>();
+List<Calculos> calcs = calcRepo.findByIdGrupoCalc(idGrupoCalc);
+Map<Object, List<Calculos>> funCalcsGrupo = calcs.stream()
+.collect(Collectors.groupingBy(Calculos::getFuncionarios));
+
+for (Object o : funCalcsGrupo.keySet()){
+	Funcionarios f = (Funcionarios)o;
+	List<Calculos> funCalcs = funCalcsGrupo.get(o).stream().sorted((c1, c2) -> c1.getEventos().getOrdemCalculo().compareTo(c2.getEventos().getOrdemCalculo())).collect(Collectors.toList());
+	FolhaFuncionario folha = new FolhaFuncionario();
+	folha.setId(f.getId());
+	folha.setNome(f.getPessoas().getNome());
+	folha.setCpf(f.getPessoas().getCpf());
+	List<ItemFolha> itens = new ArrayList<>();
+
+	for (Calculos calc : funCalcs){
+ItemFolha item = new ItemFolha();
+item.setTipo(calc.getEventos().getTipo());
+item.setNome(calc.getEventos().getDescricao());
+item.setReferencia(calc.getValor() == null || calc.getValor() == 0 ? "ISENTO" : (calc.getEventos().getReferencia() == null ? "" : calc.getEventos().getReferencia().toString()));
+item.setValor(new BigDecimal(calc.getValor()).setScale(2, RoundingMode.HALF_UP));
+itens.add(item);
+	}
+
+	folha.setItens(itens);
+folha.setTotalProventos(funCalcs.stream().filter(c -> c.getEventos().getTipo() == TipoEvento.PROVENTO).map(c -> new BigDecimal(c.getValor())).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP));
+folha.setTotalDescontos(funCalcs.stream().filter(c -> c.getEventos().getTipo() == TipoEvento.DESCONTO).map(c -> new BigDecimal(c.getValor())).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP));
+folha.setTotalNeutros(funCalcs.stream().filter(c -> c.getEventos().getTipo() == TipoEvento.NEUTRO).map(c -> new BigDecimal(c.getValor())).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP));
+folha.setSalarioBruto(new BigDecimal(salRepo.findByFuncionariosIdAndVigFinalIsNull(f.getId()).get(0).getValor()));
+folha.setSalarioLiquido(folha.getSalarioBruto().add(folha.getTotalProventos()).subtract(folha.getTotalDescontos()).setScale(2, RoundingMode.HALF_UP));
+folhas.add(folha);
+}
+
+return folhas;
+}
+
 
 	private boolean isEventoFixo(Eventos eve) {
 		return eve.getEveFixoses().size() > 0;

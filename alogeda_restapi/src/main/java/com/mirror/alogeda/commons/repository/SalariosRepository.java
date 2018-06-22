@@ -10,4 +10,5 @@ import com.mirror.alogeda.commons.model.Salarios;
 @Repository
 public interface SalariosRepository extends JpaRepository<Salarios, Integer> {
 	List<Salarios> findByVigFinalIsNull();
+	List<Salarios> findByFuncionariosIdAndVigFinalIsNull(int id);
 }
