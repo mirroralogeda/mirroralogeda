@@ -5,12 +5,9 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class CalculoAcessor {
+    private String calculoId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private Date dataCalculo;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date perInicial;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date perFinal;
 
     /**
      * @return the dataCalculo
@@ -20,38 +17,17 @@ public class CalculoAcessor {
     }
 
     /**
-     * @param dataCalculo the dataCalculo to set
+     * @return the calculoId
      */
-    public void setDataCalculo(Date dataCalculo) {
-        this.dataCalculo = dataCalculo;
+    public String getCalculoId() {
+        return calculoId;
     }
 
     /**
-     * @return the perInicial
+     * @param calculoId the calculoId to set
      */
-    public Date getPerInicial() {
-        return perInicial;
-    }
-
-    /**
-     * @param perInicial the perInicial to set
-     */
-    public void setPerInicial(Date perInicial) {
-        this.perInicial = perInicial;
-    }
-
-    /**
-     * @return the perFinal
-     */
-    public java.util.Date getPerFinal() {
-        return perFinal;
-    }
-
-    /**
-     * @param perFinal the perFinal to set
-     */
-    public void setPerFinal(java.util.Date perFinal) {
-        this.perFinal = perFinal;
+    public void setCalculoId(String calculoId) {
+        this.calculoId = calculoId;
     }
 
 }

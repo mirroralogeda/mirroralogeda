@@ -9,19 +9,19 @@ public class PeriodoFolha {
     private Date perInicial;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date perFinal;
-    private int calculos;
-    private boolean fechado;
+    private String calculoId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date dataCalculo;
 
     public PeriodoFolha() {
 
     }
 
-    public PeriodoFolha(Date perInicial, Date perFinal, int calculos, boolean fechado) {
+    public PeriodoFolha(Date perInicial, Date perFinal, Date dataCalculo, String id) {
         this.perInicial = perInicial;
         this.perFinal = perFinal;
-
-        this.calculos = calculos;
-        this.fechado = fechado;
+        this.dataCalculo = dataCalculo;
+        this.calculoId = id;
     }
 
     /**
@@ -53,31 +53,31 @@ public class PeriodoFolha {
     }
 
     /**
-     * @return the calculos
+     * @return the dataCalculo
      */
-    public int getCalculos() {
-        return calculos;
+    public Date getDataCalculo() {
+        return dataCalculo;
     }
 
     /**
-     * @param calculos the calculos to set
+     * @param dataCalculo the dataCalculo to set
      */
-    public void setCalculos(int calculos) {
-        this.calculos = calculos;
+    public void setDataCalculo(Date dataCalculo) {
+        this.dataCalculo = dataCalculo;
     }
 
     /**
-     * @return the fechado
+     * @return the calculoId
      */
-    public boolean isFechado() {
-        return fechado;
+    public String getCalculoId() {
+        return calculoId;
     }
 
     /**
-     * @param fechado the fechado to set
+     * @param calculoId the calculoId to set
      */
-    public void setFechado(boolean fechado) {
-        this.fechado = fechado;
+    public void setCalculoId(String calculoId) {
+        this.calculoId = calculoId;
     }
 
 }

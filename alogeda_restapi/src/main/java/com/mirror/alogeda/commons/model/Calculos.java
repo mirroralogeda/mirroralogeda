@@ -33,6 +33,7 @@ public class Calculos implements java.io.Serializable {
     private Date dataCalculo;
     private Boolean perFechado;
     private Date dataPagamento;
+    private String idGrupoCalc;
 
     public Calculos() {
     }
@@ -154,6 +155,20 @@ public class Calculos implements java.io.Serializable {
 
     public void setDataPagamento(Date dataPagamento) {
         this.dataPagamento = dataPagamento;
+    }
+
+    /**
+     * @return the idGrupoCalc
+     */
+    public String getIdGrupoCalc() {
+        return idGrupoCalc;
+    }
+
+    /**
+     * @param idGrupoCalc the idGrupoCalc to set
+     */
+    public void setIdGrupoCalc(String idGrupoCalc) {
+        this.idGrupoCalc = idGrupoCalc;
     }
 
 }

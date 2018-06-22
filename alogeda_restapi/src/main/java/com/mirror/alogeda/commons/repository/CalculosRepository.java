@@ -13,5 +13,6 @@ public interface CalculosRepository extends JpaRepository<Calculos, Integer> {
     //@Query("select new com.mirror.alogeda.commons.model.viewmodel.PeriodoCalculo(p.perInicial, p.perFinal, (select count(distinct c.dataCalculo) from Calculos c where c.perIncial = p.perInicial and c.perFinal = p.perFinal), (select function('bool_or', c.per_fechado) from Calculos c where c.perIncial = p.perInicial and c.perFinal = p.perFinal)) from ParametrosFolha p")
 //public List<PeriodoCalculo> getPeriodos();
 public List<Calculos> findByDataCalculoBetween(Date dataInicio, Date dataFinal);
-public List<Calculos> findByDataCalculo(Date data);
+public List<Calculos> findByDataCalculo(Date data);// Nao funciona como esperado
+public List<Calculos> findByIdGrupoCalc(String id);
 }
