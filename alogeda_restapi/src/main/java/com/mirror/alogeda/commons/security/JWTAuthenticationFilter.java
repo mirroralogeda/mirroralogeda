@@ -19,7 +19,7 @@ public class JWTAuthenticationFilter  extends GenericFilterBean {
 			throws IOException, ServletException {
 		Authentication authentication = TokenAuthenticationService
 				.getAuthentication((HttpServletRequest) request);
-		
+		System.out.println("Protocolo = "+ request.getProtocol()+ "Request= "+request.getRemoteHost());
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		filterChain.doFilter(request, response);
 	}

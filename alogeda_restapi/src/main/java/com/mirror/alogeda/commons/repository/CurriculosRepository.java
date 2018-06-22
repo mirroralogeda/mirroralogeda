@@ -11,8 +11,8 @@ import com.mirror.alogeda.commons.model.Curriculos;
 
 @Repository
 public interface CurriculosRepository extends JpaRepository<Curriculos, Integer> {
-    
-	
-	 @Query("select c from Curriculos as c join fetch c.pessoas")
-	    public List<Curriculos> findAllCompleto();
+   
+		@Query("select c from Curriculos as c join fetch c.pessoas p where p.id = ?1")
+	    public List<?> findCompleto(int id);
 }
+	
