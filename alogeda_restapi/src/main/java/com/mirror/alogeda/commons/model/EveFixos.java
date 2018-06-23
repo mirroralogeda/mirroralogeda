@@ -68,7 +68,7 @@ public class EveFixos implements java.io.Serializable {
     }
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "eventos_id", nullable = false)
     public Eventos getEventos() {
         return this.eventos;
@@ -78,7 +78,7 @@ public class EveFixos implements java.io.Serializable {
         this.eventos = eventos;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "funcionarios_id", nullable = false)
     public Funcionarios getFuncionarios() {
         return this.funcionarios;

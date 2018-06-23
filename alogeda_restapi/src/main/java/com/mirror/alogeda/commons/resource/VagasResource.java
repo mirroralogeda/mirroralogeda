@@ -1,12 +1,9 @@
 package com.mirror.alogeda.commons.resource;
 
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,38 +13,36 @@ import com.mirror.alogeda.commons.model.*;
 import com.mirror.alogeda.commons.service.*;
 
 @Component
-@Path("funcionarios")
-public class FuncionariosResource {
+@Path("vagas")
+public class VagasResource {
     @Autowired
-    private FuncionariosService Service;
+    private VagasService Service;
 
     @GET
     @Path("getall")
-    public Response getAll(@QueryParam("nome") String nome) {
-        return ApiResponse.ok(Service.findByName(nome));
+    public Response getAll() {
+        return ApiResponse.ok(Service.getAll());
     }
 
     @GET
     @Path("BuscaPorId")
-    public Response BuscaPorId(@QueryParam("entidadeId") int entidadeId) {
-        return ApiResponse.ok(Service.buscaId(entidadeId));
+    public Response BuscaPorId(int entidadeId) {
+        return ApiResponse.ok(Service.buscaPorId(entidadeId));
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("save")
-    public Response save(Funcionarios entidade) {
+    public Response save(Vagas entidade) {
         Service.save(entidade);
         return ApiResponse.ok();
     }
 
-    @GET
-    @Path("findAll")
-    public Response findAll() {
-        List<Funcionarios> funcionarios = Service.getAll();
-        for (Funcionarios funcionario : funcionarios) {
-            funcionario.getPessoas();
-        }
-        return ApiResponse.ok(funcionarios);
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("delete")
+    public Response delete(Vagas entidade) {
+        Service.delete(entidade);
+        return ApiResponse.ok();
     }
 }
