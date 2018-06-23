@@ -57,20 +57,19 @@ public class CalculosService {
 	private TabIrrfRepository tabIrrfRepo;
 
 	@Transactional
-	public List<Calculos> Calcula() {
+	public void Calcula() {
 		List<ParametrosFolha> prfs = prfRepo.findByVigencia(new Date());
 
 		if (prfs.size() == 0)
 			throw new DomainException("Não há períodos abertos para a data atual.");
 
-		return Calcula(prfs.get(0));
+		 Calcula(prfs.get(0));
 	}
 
 	@Transactional
-	public List<Calculos> Calcula(ParametrosFolha parametro) {
+	public void Calcula(ParametrosFolha parametro) {
 		Date dataCalculo = new Date();
 		String idGrupo = dataCalculo.toString();
-		List<Calculos> calcs = new ArrayList<Calculos>();
 
 		// Cada funcionario tem um salario, logo iterando pelos salarios vigentes tambem
 		// se itera pelos funcionarios.
@@ -97,11 +96,8 @@ public class CalculosService {
 				calc.setEventos(eve);
 				calc.setValor(valor);
 				calcRepo.save(calc);
-				calcs.add(calc);
 			}
 		}
-
-		return calcs;
 	}
 
 	// Otimizar (criar consultas) assim que possivel
