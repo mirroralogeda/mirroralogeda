@@ -22,8 +22,9 @@ public class CurriculosService extends CrudService<Curriculos> {
         super(curriculosRepository);
     }
     
-    public List<Curriculos> findAllCompleto() {
-        return repository.findAllCompleto();
+    public List<?> findCompleto(int id) {
+        return repository.findCompleto(id);
     }
+
 
 }
