@@ -1,4 +1,4 @@
-/*package com.mirror.alogeda.commons.service;
+package com.mirror.alogeda.commons.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -6,21 +6,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.mirror.alogeda.commons.model.Cargos;
-import com.mirror.alogeda.commons.repository.CargosRepository;
+import com.mirror.alogeda.commons.model.AreasAtuacao;
+
+import com.mirror.alogeda.commons.repository.AreasAtuacaoRepository;
+
 
 @Service
 public class AreasAtuacaoService extends CrudService<AreasAtuacao> {
 
     @Autowired
-    public AreasAtuacaoService(CargosRepository AreasAtuacaoRepository) {
+    public AreasAtuacaoService(AreasAtuacaoRepository AreasAtuacaoRepository) {
         super(AreasAtuacaoRepository);
     }
 
-    @Autowired
-    public List<AreasAtuacao> buscarAreasAtuacao() {
-       
-    }
+
 
 }
-*/

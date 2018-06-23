@@ -125,7 +125,7 @@ public class Funcionarios implements java.io.Serializable {
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pessoas_id", nullable = false)
     public Pessoas getPessoas() {
         return this.pessoas;
