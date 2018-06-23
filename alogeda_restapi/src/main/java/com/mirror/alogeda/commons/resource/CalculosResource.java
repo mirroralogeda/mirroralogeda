@@ -18,10 +18,11 @@ public class CalculosResource {
 	@Autowired
 	private CalculosService calcService;
 
-	@GET
+	@POST
 	@Path("calcula")
 	public Response calcula() {
-		return ApiResponse.ok(calcService.Calcula());
+		calcService.Calcula();
+		return ApiResponse.ok();
 	}
 
 	@GET
