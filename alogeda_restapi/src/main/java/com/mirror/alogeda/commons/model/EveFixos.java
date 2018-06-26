@@ -67,7 +67,7 @@ public class EveFixos implements java.io.Serializable {
         this.id = id;
     }
 
-    @JsonIgnore
+    // @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "eventos_id", nullable = false)
     public Eventos getEventos() {

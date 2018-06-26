@@ -25,19 +25,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.cors();
-		
-		httpSecurity.csrf().disable().authorizeRequests()// .antMatchers("/**").permitAll()
-				.antMatchers(HttpMethod.POST, "/api/login").permitAll().anyRequest().authenticated().and()
-				.addFilterBefore(new JWTLoginFilter("/api/login", authenticationManager()),
-						UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+		httpSecurity.csrf().disable().authorizeRequests().antMatchers("/**").permitAll()
+				// .antMatchers(HttpMethod.POST, "/api/login").permitAll()
+				.anyRequest().authenticated();
+				// .and()
+				// .addFilterBefore(new JWTLoginFilter("/api/login", authenticationManager()),
+				// 		UsernamePasswordAuthenticationFilter.class)
+				// .addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		// OPTIONS NESSA BOSTA
-		httpSecurity.csrf().disable().authorizeRequests()// .antMatchers("/**").permitAll()
-				.antMatchers(HttpMethod.OPTIONS, "/api/login").permitAll().anyRequest().authenticated().and()
-				.addFilterBefore(new JWTLoginFilter("/api/login", authenticationManager()),
-						UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		httpSecurity.csrf().disable().authorizeRequests().antMatchers("/**").permitAll()
+				// .antMatchers(HttpMethod.OPTIONS, "/api/login").permitAll()
+				.anyRequest().authenticated();
+				// .and()
+				// .addFilterBefore(new JWTLoginFilter("/api/login", authenticationManager()),
+				// 		UsernamePasswordAuthenticationFilter.class)
+				// .addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override
