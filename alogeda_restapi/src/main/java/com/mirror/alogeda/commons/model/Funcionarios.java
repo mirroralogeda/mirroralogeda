@@ -32,6 +32,7 @@ public class Funcionarios implements java.io.Serializable {
 
     private int id;
     private Pessoas pessoas;
+    private Cargos cargos;
     private Date dataAdmissao;
     private String nomePai;
     private String nomeMae;
@@ -130,9 +131,17 @@ public class Funcionarios implements java.io.Serializable {
     public Pessoas getPessoas() {
         return this.pessoas;
     }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cargos_id", nullable = false)
+    public Cargos getCargos() {
+        return this.cargos;
+    }
 
     public void setPessoas(Pessoas pessoas) {
         this.pessoas = pessoas;
+    }
+    public void setCargos(Cargos cargos) {
+        this.cargos = cargos;
     }
 
     @Temporal(TemporalType.DATE)
