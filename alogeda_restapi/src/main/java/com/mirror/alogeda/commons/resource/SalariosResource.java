@@ -1,5 +1,8 @@
 package com.mirror.alogeda.commons.resource;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -30,9 +33,9 @@ public class SalariosResource {
 	@Path("getall")
 
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAll( @QueryParam("funcionario")  int funcionario) {
+	public Response getAll(@QueryParam("funcionario") int funcionario) {
 		return ApiResponse.ok(salariosService.findByFuncionario(funcionario));
-	} 
+	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -41,15 +44,24 @@ public class SalariosResource {
 		Funcionarios funcionario = new Funcionarios();
 		funcionario.setId(funcionarioId);
 		salarios.setFuncionarios(funcionario);
-		
+
+		List<Salarios> listaSalarios = salariosService.findByFuncionario(funcionarioId);
+
+		for (Salarios salario : listaSalarios) {
+			if (salario.getVigFinal() == null) {
+				salario.setVigFinal(new Date());
+				salariosService.save(salario);
+			}
+		}
 		salariosService.save(salarios);
 		return ApiResponse.ok();
 	}
+
 	@POST
 
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("delete")
-	public Response delete( Salarios salarios) {
+	public Response delete(Salarios salarios) {
 		salariosService.delete(salarios);
 		return ApiResponse.ok();
 	}
