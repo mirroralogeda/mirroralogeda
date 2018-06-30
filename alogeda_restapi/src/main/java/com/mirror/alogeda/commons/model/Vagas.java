@@ -75,7 +75,7 @@ public class Vagas  implements java.io.Serializable {
         this.id = id;
     }
 
-@ManyToOne(fetch=FetchType.LAZY)
+@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="cargos_id", nullable=false)
     public Cargos getCargos() {
         return this.cargos;
